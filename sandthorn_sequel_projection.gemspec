@@ -26,5 +26,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sandthorn_driver_sequel"
 
   spec.add_runtime_dependency     "sandthorn"
+  spec.add_runtime_dependency     "sequel"
 
 end
