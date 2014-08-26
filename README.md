@@ -8,6 +8,10 @@ Main points:
 - Projections register themselves in a database table
 - DSL for registering listeners to filtered event streams
 
+Requirements on event handling:
+
+- It must be possible to define event handlers such that the execution order is defined
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -29,6 +33,7 @@ First do some basic configuration:
     SandthornSequelProjection.configure do |thorn|
       thorn.projection_database_url = "postgres://db-server.foo.bar"
       thorn.event_driver = SomeDriver.new
+      thorn.projections_folder = './my_projections'
     end
     
 Then create some projections
@@ -39,13 +44,12 @@ Then create some projections
         # create whatever tables and stuff that is needed
       end
       
-      event_listeners \
-        new_users: { aggregate_type: MyAggregates::User, event_name: :new },
-        foo_changed: { 
-          aggregate_types: [MyAggregates::User, MyAggregates::Foo], 
-          event_names: [:foo_changed, :bar_changed]
-        }
-      
+      # Event handlers will be executed in the order they were defined
+      event_handlers do |handlers|
+        handlers.add new_user: { aggregate_type: MyAggregates::User, event_name: :new }
+        handlers.add foo_changed: { aggregate_types: [MyAggregates::User, MyAggregates::Foo] }
+      end 
+        
       def new_users(event)
         # handle new user events, one at a time
       end
@@ -55,11 +59,14 @@ Then create some projections
       end
         
     end
+   
+Then run the runner, for example by putting it in a rake task
 
-When a Projection is defined it registers itself (in practice by writing to the DB).
-This creates a shared repository of projections and negates the need to explicitly define what
-projections to execute.
- 
+    runner = SandthornSequelProjection::Runner.new
+    runner.run
+    
+The runner polls the database for changes and passes new events to the projections found in the designated 
+projections folder.
     
 Then run the updater process. It will continuously poll for new events.
 
