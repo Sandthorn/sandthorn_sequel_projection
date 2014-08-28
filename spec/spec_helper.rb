@@ -5,7 +5,14 @@ else
   require 'simplecov'
   SimpleCov.start
 end
+
 require 'sandthorn_sequel_projection'
 
 RSpec.configure do |config|
 end
+
+SandthornSequelProjection.configure do |config|
+  config.projections_driver = Sequel.sqlite
+end
+
+SandthornSequelProjection.start

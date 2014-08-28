@@ -16,9 +16,16 @@ module SandthornSequelProjection
       yield(configuration) if block_given?
     end
 
+    def start
+      ProcessedEventsTracker.migrate!(configuration.projections_driver)
+    end
+
   end
 
   class Configuration
     attr_accessor :projections_driver, :event_driver, :projections_folder
+    class << self
+      alias_method :default, :new
+    end
   end
 end
