@@ -1,5 +1,7 @@
+require 'sequel'
 require "sandthorn_sequel_projection/version"
 require "sandthorn_sequel_projection/projection"
+require "sandthorn_sequel_projection/lock"
 
 module SandthornSequelProjection
 
