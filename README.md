@@ -5,7 +5,7 @@ Uses the Sequel gem for storage.
  
 Main points:
 
-- Projections register themselves in a database table
+- Projections are placed in a projections folder for easy access
 - DSL for registering listeners to filtered event streams
 
 Requirements on event handling:
