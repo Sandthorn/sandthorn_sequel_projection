@@ -22,7 +22,7 @@ module SandthornSequelProjection
           block = Proc.new {}
           klass.define_migration(block)
           expect(block).to receive(:call)
-          klass.new(nil).migrate!
+          klass.new.migrate!
         end
       end
 

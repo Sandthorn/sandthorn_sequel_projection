@@ -10,9 +10,9 @@ module SandthornSequelProjection
     DEFAULT_TIMEOUT = 3*60 # 3 minutes
     DEFAULT_LOCK_COLUMN = :locked_at
 
-    def initialize(db_connection, identifier, table_name = nil)
-      @db_connection = db_connection
-      @identifier = identifier
+    def initialize(identifier, db_connection = nil, table_name = nil)
+      @identifier = identifier.to_s
+      @db_connection = db_connection || SandthornDriverSequel.configuration.projections_driver
       @table_name = table_name || ProcessedEventsTracker::DEFAULT_TABLE_NAME
     end
 
@@ -72,10 +72,9 @@ module SandthornSequelProjection
     end
 
     def locked_at
-      if row = table.where(identifier: @identifier).first
+      if row = db_row.first
         row[lock_column_name]
       end
     end
-
   end
 end

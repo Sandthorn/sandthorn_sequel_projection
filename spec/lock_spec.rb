@@ -3,7 +3,7 @@ module SandthornSequelProjection
   describe Lock do
     let(:db_connection) { Sequel.sqlite }
     let(:table_name) { ProcessedEventsTracker::DEFAULT_TABLE_NAME }
-    let(:lock) { SandthornSequelProjection::Lock.new(db_connection, "foo") }
+    let(:lock) { SandthornSequelProjection::Lock.new("foo", db_connection) }
 
     before(:each) do
       db_connection.create_table?(table_name) do
