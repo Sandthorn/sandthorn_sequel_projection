@@ -7,11 +7,10 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 task :console do
-  require 'ap'
+  require 'awesome_print'
   require 'pry'
-  require 'pry/completion'
   require 'bundler'
-  require 'sandthorn'
+  require 'sandthorn_sequel_projection'
   ARGV.clear
   Pry.start
 end
