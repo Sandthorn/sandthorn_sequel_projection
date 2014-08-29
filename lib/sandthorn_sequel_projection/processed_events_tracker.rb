@@ -23,8 +23,13 @@ module SandthornSequelProjection
       end
     end
 
-    def unprocessed_events
-      Sandthorn.get_events(after_sequence_number: last_processed_sequence_number)
+    def process_events
+      with_lock do
+        events = get_unprocessed_events
+        until(events.empty?)
+
+        end
+      end
     end
 
     def last_processed_sequence_number

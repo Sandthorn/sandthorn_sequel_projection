@@ -11,9 +11,9 @@ module SandthornSequelProjection
     DEFAULT_LOCK_COLUMN = :locked_at
 
     def initialize(identifier, db_connection = nil, table_name = nil)
-      @identifier = identifier.to_s
-      @db_connection = db_connection || SandthornDriverSequel.configuration.projections_driver
-      @table_name = table_name || ProcessedEventsTracker::DEFAULT_TABLE_NAME
+      @identifier     = identifier.to_s
+      @db_connection  = db_connection || SandthornDriverSequel.configuration.projections_driver
+      @table_name     = table_name || ProcessedEventsTracker::DEFAULT_TABLE_NAME
     end
 
     def locked?

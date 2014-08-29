@@ -19,10 +19,8 @@ require 'forwardable'
     end
 
     def update!
-      tracker.with_lock do
-        events = tracker.unprocessed_events
-        handlers.handle(events)
-        update_last_processed
+      tracker.process_events do |batch|
+        handlers.handle(batch)
       end
     end
 
