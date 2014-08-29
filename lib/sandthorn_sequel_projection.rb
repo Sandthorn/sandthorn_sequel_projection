@@ -1,6 +1,6 @@
 require 'sequel'
 require "sandthorn_sequel_projection/version"
-require "sandthorn_sequel_projection/event_handlers"
+require "sandthorn_sequel_projection/event_handler_collection"
 require "sandthorn_sequel_projection/projection"
 require "sandthorn_sequel_projection/lock"
 require "sandthorn_sequel_projection/processed_events_tracker"
