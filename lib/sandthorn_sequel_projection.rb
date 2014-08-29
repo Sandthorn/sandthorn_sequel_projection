@@ -1,6 +1,7 @@
 require 'sequel'
 require 'sandthorn_event_filter'
 require "sandthorn_sequel_projection/version"
+require "sandthorn_sequel_projection/utilities"
 require "sandthorn_sequel_projection/event_handler"
 require "sandthorn_sequel_projection/event_handler_collection"
 require "sandthorn_sequel_projection/projection"
