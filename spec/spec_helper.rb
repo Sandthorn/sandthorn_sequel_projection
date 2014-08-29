@@ -7,6 +7,7 @@ else
 end
 
 require 'sandthorn_sequel_projection'
+require 'sandthorn_event_filter/rspec/custom_matchers'
 
 RSpec.configure do |config|
 end
