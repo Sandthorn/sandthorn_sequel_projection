@@ -1,5 +1,9 @@
+require "forwardable"
+
 module SandthornSequelProjection
   class EventHandlerCollection
+    extend Forwardable
+    def_delegators :handlers, :length
 
     attr_reader :handlers
 

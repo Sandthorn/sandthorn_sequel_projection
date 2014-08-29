@@ -4,10 +4,31 @@ module SandthornSequelProjection
 
   module MyModule
     class TestProjection < Projection
+
+      def foo
+
+      end
+
+      def bar
+
+      end
+
     end
   end
 
   describe Projection do
+
+    describe "::initialize" do
+      it "sets the handlers on the instance" do
+        MyModule::TestProjection.define_event_handlers do |handlers|
+          handlers.add(:foo)
+          handlers.add(:bar)
+        end
+        projection = MyModule::TestProjection.new
+        handlers = projection.event_handlers
+        expect(handlers.length).to eq(2)
+      end
+    end
 
     describe '::identifier' do
       it "snake cases the class identifier" do
@@ -31,6 +52,12 @@ module SandthornSequelProjection
           klass = Class.new(Projection)
           expect { klass.new(nil).migrate! }.to_not raise_error
         end
+      end
+    end
+
+    describe "::define_event_handlers" do
+      it "yields an EventHandlerCollection" do
+        expect { |b| MyModule::TestProjection.define_event_handlers(&b) }.to yield_with_args(EventHandlerCollection)
       end
     end
 

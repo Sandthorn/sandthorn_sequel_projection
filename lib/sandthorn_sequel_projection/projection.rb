@@ -6,15 +6,16 @@ require 'forwardable'
 
     def_delegator self, :identifier
 
-    attr_reader :db_connection
+    attr_reader :db_connection, :event_handlers
 
     def initialize(db_connection = nil)
       @db_connection = db_connection || SandthornSequelProjection.configuration.projections_driver
       @tracker = ProcessedEventsTracker.new(identifier, @db_connection)
+      @event_handlers = self.class.event_handlers
     end
 
     def migrate!
-      (self.class.migration || Proc.new {}).call(db_connection)
+      (self.class.migration || Utilities::NullProc.new).call(db_connection)
     end
 
     def update!
@@ -30,12 +31,12 @@ require 'forwardable'
       attr_accessor :migration, :event_handlers
 
       def define_migration(migration = nil)
-        self.migration = migration || Proc.new
+        self.migration = migration || Proc.new # Proc.new will wrap the block argument in a Proc
       end
 
-      def event_handlers
-        @event_handlers = EventHandlers.new
-        yield(event_handlers)
+      def define_event_handlers
+        @event_handlers ||= EventHandlerCollection.new
+        yield(@event_handlers)
       end
 
       def identifier
