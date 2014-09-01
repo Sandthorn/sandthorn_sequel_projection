@@ -24,13 +24,37 @@ module SandthornSequelProjection
         end
       end
 
-      describe "#set_last_processed_sequence_number" do
-        context "when the row isn't locked" do
-          it "sets it" do
-            tracker.set_last_processed_sequence_number(127)
-            expect(tracker.last_processed_sequence_number).to eq(127)
+      describe "#process_events" do
+        let(:event_store) { SandthornSequelProjection.event_store }
+        let(:events) { [{sequence_number: 1}, {sequence_number: 2}] }
+        around do |example|
+          old_batch_size = SandthornSequelProjection.batch_size
+          SandthornSequelProjection.configuration.batch_size = 1
+          example.run
+          SandthornSequelProjection.configuration.batch_size = old_batch_size
+        end
+
+        before do
+          tracker.reset
+          SandthornSequelProjection.event_store.reset
+          events.each { |e| event_store.add(e) }
+        end
+
+        it "yields events" do
+          expect { |b| tracker.process_events(&b) }.to yield_successive_args([events.first], [events.last])
+        end
+
+        it "sets the last processed number" do
+          tracker.process_events { |*| }
+          expect(tracker.last_processed_sequence_number).to eq(2)
+        end
+
+        it "has the lock during the yield" do
+          tracker.process_events do |*|
+            expect(tracker.lock.locked?).to be_truthy
           end
         end
+
       end
     end
 

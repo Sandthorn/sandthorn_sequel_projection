@@ -5,8 +5,9 @@ module SandthornSequelProjection
     extend Forwardable
 
     def_delegator self, :table_name
+    def_delegators :db_connection, :transaction
 
-    attr_reader :db_connection, :identifier
+    attr_reader :db_connection, :identifier, :lock
 
     DEFAULT_TABLE_NAME = :processed_events_trackers
 
@@ -23,23 +24,22 @@ module SandthornSequelProjection
       end
     end
 
-    def process_events
+    def process_events(&block)
       with_lock do
-        events = get_unprocessed_events
-        until(events.empty?)
-
+        cursor = Cursor.new(after_sequence_number: last_processed_sequence_number)
+        events = cursor.get_batch
+        transaction do
+          until(events.empty?)
+            block.call(events)
+            events = cursor.get_batch
+          end
+          write_sequence_number(cursor.last_sequence_number)
         end
       end
     end
 
     def last_processed_sequence_number
       row[:last_processed_sequence_number]
-    end
-
-    def set_last_processed_sequence_number(number)
-      with_lock do
-        write_sequence_number(number)
-      end
     end
 
     def table
@@ -52,6 +52,12 @@ module SandthornSequelProjection
 
     def row
       table.where(identifier: identifier).first
+    end
+
+    def reset
+      with_lock do
+        write_sequence_number(0)
+      end
     end
 
     def self.table_name
