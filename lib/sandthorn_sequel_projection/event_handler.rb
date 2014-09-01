@@ -38,8 +38,8 @@ module SandthornSequelProjection
     end
 
     def extract_filter_options(options)
-      types   = Array(options[:aggregate_type] || options[:aggregate_types])
-      events  = Array(options[:event_name] || options[:event_names])
+      types   = Array.wrap(options[:aggregate_type] || options[:aggregate_types])
+      events  = Array.wrap(options[:event_name] || options[:event_names])
       [types, events]
     end
 
