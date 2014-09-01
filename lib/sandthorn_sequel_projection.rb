@@ -23,12 +23,17 @@ module SandthornSequelProjection
       ProcessedEventsTracker.migrate!(configuration.projections_driver)
     end
 
+    def event_store
+      configuration.event_store
+    end
+
   end
 
   class Configuration
-    attr_accessor :projections_driver, :event_driver, :projections_folder
+    attr_accessor :projections_driver, :event_store, :projections_folder
     class << self
       alias_method :default, :new
     end
   end
 end
+
