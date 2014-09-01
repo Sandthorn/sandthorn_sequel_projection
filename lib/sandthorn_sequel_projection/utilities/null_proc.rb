@@ -2,7 +2,7 @@ module SandthornSequelProjection
   module Utilities
     class NullProc < Proc
       def self.new
-        super() {}
+        super() { |*| }
       end
     end
   end
