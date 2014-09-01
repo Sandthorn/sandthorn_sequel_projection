@@ -45,9 +45,12 @@ Then create some projections
       end
       
       # Event handlers will be executed in the order they were defined
-      event_handlers do |handlers|
+      # The key is the name of the method to be executed. Filters are defined in the value.
+      # Handlers with only a symbol will execute for all events.
+      define_event_handlers do |handlers|
         handlers.add new_user: { aggregate_type: MyAggregates::User, event_name: :new }
         handlers.add foo_changed: { aggregate_types: [MyAggregates::User, MyAggregates::Foo] }
+        handlers.add :wildcard
       end 
         
       def new_users(event)
@@ -57,7 +60,10 @@ Then create some projections
       def foo_changed(event)
         # handle the events defined in the foo_changed-listener, one at a time
       end
-        
+      
+      def wildcard(event)
+        # Will receive all events
+      end
     end
    
 Then run the runner, for example by putting it in a rake task
