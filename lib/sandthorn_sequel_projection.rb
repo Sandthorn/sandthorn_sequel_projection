@@ -28,13 +28,21 @@ module SandthornSequelProjection
       configuration.event_store
     end
 
+    def batch_size
+      configuration.batch_size
+    end
+
   end
 
   class Configuration
-    attr_accessor :projections_driver, :event_store, :projections_folder
-    class << self
-      alias_method :default, :new
+    attr_accessor :projections_driver, :event_store, :projections_folder, :batch_size
+
+    def self.default
+      self.new do |c|
+        c.batch_size = 40
+      end
     end
+
   end
 end
 
