@@ -13,15 +13,19 @@ module SandthornSequelProjection
     end
 
     describe "#handle" do
-      it "calls handle on each handler for every event" do
+      it "calls handle on each handler for every event, in order" do
         events = [1,2]
         handler1 = double
         handler2 = double
         handlers = [handler1, handler2]
         handlers.each do |handler|
           collection.add(handler)
-          expect(handler).to receive(:handle).with(1).once
-          expect(handler).to receive(:handle).with(2).once
+        end
+        handlers.each do |handler|
+          expect(handler).to receive(:handle).ordered.with(1).once
+        end
+        handlers.each do |handler|
+          expect(handler).to receive(:handle).ordered.with(2).once
         end
         collection.handle(events)
       end
