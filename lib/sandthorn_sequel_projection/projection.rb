@@ -6,7 +6,7 @@ require 'forwardable'
 
     def_delegator self, :identifier
 
-    attr_reader :db_connection, :event_handlers
+    attr_reader :db_connection, :event_handlers, :tracker
 
     def initialize(db_connection = nil)
       @db_connection = db_connection || SandthornSequelProjection.configuration.projections_driver
@@ -20,7 +20,7 @@ require 'forwardable'
 
     def update!
       tracker.process_events do |batch|
-        handlers.handle(batch)
+        event_handlers.handle(self, batch)
       end
     end
 
