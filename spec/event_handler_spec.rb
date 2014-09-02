@@ -8,7 +8,7 @@ module SandthornSequelProjection
     end
 
     let(:projection) { TestProjection.new }
-    let(:simple_handler) { EventHandler.new(projection, :foo)}
+    let(:simple_handler) { EventHandler.new(:foo)}
 
     describe "::initialize" do
 
@@ -19,13 +19,13 @@ module SandthornSequelProjection
         end
 
         it "creates a handler with the proper method handle" do
-          expect(simple_handler.method).to eq(projection.method(:foo))
+          expect(simple_handler.message).to eq(:foo)
         end
 
       end
 
       context "when given filters" do
-        let(:handler) { EventHandler.new(projection, foo: { aggregate_type: "FooBar", event_name: "new" })}
+        let(:handler) { EventHandler.new(foo: { aggregate_type: "FooBar", event_name: "new" })}
         let(:extractor) { handler.filter.matchers.matchers.first }
         let(:matching_event) { { aggregate_type: "FooBar", event_name: "new" } }
 
@@ -44,23 +44,23 @@ module SandthornSequelProjection
       context "when given just a symbol" do
         it "always calls the handler method" do
           input = {foo: :bar}
-          expect(simple_handler.handle(event)).to eq(event)
+          expect(simple_handler.handle(projection, event)).to eq(event)
         end
       end
 
       context "when given a symbol and filter" do
-        let(:handler) { EventHandler.new(projection, foo: { aggregate_type: "FooBar", event_name: "new" })}
+        let(:handler) { EventHandler.new(foo: { aggregate_type: "FooBar", event_name: "new" })}
         context "when the filter matches" do
           it "calls the method" do
             allow(handler.filter).to receive(:match?) { true }
-            expect(handler.handle(event)).to eq(event)
+            expect(handler.handle(projection, event)).to eq(event)
           end
         end
 
         context "when the filter doesn't match" do
           it "doesn't call the method" do
             allow(handler.filter).to receive(:match?) { false }
-            expect(handler.handle(event)).to be_falsey
+            expect(handler.handle(projection, event)).to be_falsey
           end
         end
       end

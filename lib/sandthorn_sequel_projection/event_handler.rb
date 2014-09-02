@@ -1,17 +1,16 @@
 module SandthornSequelProjection
   class EventHandler
 
-    attr_reader :projection, :filter, :method
+    attr_reader :projection, :filter, :message
 
-    def initialize(projection, options)
-      @projection = projection
+    def initialize(options)
       @filter = SandthornEventFilter::Filter.new
       parse_options(options)
     end
 
-    def handle(event)
+    def handle(target, event)
       if filter.match?(event)
-        call_handler(event)
+        call_handler(target, event)
       end
     end
 
@@ -27,8 +26,8 @@ module SandthornSequelProjection
       end
     end
 
-    def call_handler(event)
-      @method.call(event)
+    def call_handler(target, event)
+      target.send(message, event)
     end
 
     def construct_filter(options)
@@ -43,8 +42,8 @@ module SandthornSequelProjection
       [types, events]
     end
 
-    def set_method(handle)
-      @method = @projection.method(handle)
+    def set_method(message)
+      @message = message
     end
   end
 end

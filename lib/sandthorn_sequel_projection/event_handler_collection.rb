@@ -3,7 +3,7 @@ require "forwardable"
 module SandthornSequelProjection
   class EventHandlerCollection
     extend Forwardable
-    def_delegators :handlers, :length
+    def_delegators :handlers, :length, :each, :first
 
     attr_reader :handlers
 
@@ -11,15 +11,15 @@ module SandthornSequelProjection
       @handlers = Set.new
     end
 
-    def add(handler)
-      @handlers << handler
+    def define(handler_data)
+      @handlers << EventHandler.new(handler_data)
     end
 
-    def handle(events)
+    def handle(projection, events)
       events = Array.wrap(events)
       events.each do |event|
         handlers.each do |handler|
-          handler.handle(event)
+          handler.handle(projection, event)
         end
       end
     end
