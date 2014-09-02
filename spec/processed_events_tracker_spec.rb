@@ -55,6 +55,11 @@ module SandthornSequelProjection
           end
         end
 
+        it "has released the lock afterwards" do
+          tracker.process_events { |*| }
+          expect(tracker.lock.locked?).to be_falsey
+        end
+
       end
     end
 
