@@ -14,17 +14,22 @@ module SandthornSequelProjection
       end
 
     end
+
+    class WithHandlers < TestProjection
+
+      define_event_handlers do |handlers|
+        handlers.define(:foo)
+        handlers.define(:bar)
+      end
+
+    end
   end
 
   describe Projection do
 
     describe "::initialize" do
       it "sets the handlers on the instance" do
-        MyModule::TestProjection.define_event_handlers do |handlers|
-          handlers.add(:foo)
-          handlers.add(:bar)
-        end
-        projection = MyModule::TestProjection.new
+        projection = MyModule::WithHandlers.new
         handlers = projection.event_handlers
         expect(handlers.length).to eq(2)
       end
@@ -52,6 +57,25 @@ module SandthornSequelProjection
           klass = Class.new(Projection)
           expect { klass.new(nil).migrate! }.to_not raise_error
         end
+      end
+    end
+
+    describe "#update!" do
+
+      before do
+        event_store = SandthornSequelProjection.event_store
+        event_store.reset
+        event_store.add_event({sequence_number: 1})
+        event_store.add_event({sequence_number: 2})
+      end
+
+      it "fetches events and passes them on to the handlers" do
+        projection = MyModule::WithHandlers.new
+        handlers = projection.event_handlers
+        handlers.each do |handler|
+          expect(handler).to receive(:handle).twice
+        end
+        projection.update!
       end
     end
 
