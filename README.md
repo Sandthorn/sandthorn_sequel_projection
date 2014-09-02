@@ -28,7 +28,7 @@ Or install it yourself as:
 
 ## Usage
 
-First do some basic configuration:
+### 1. Configure
 
     SandthornSequelProjection.configure do |thorn|
       thorn.projection_database_url = "postgres://db-server.foo.bar"
@@ -36,7 +36,7 @@ First do some basic configuration:
       thorn.projections_folder = './my_projections'
     end
     
-Then create some projections
+### 2. Define projections
 
     class MyProjection < SandthornSequelProjection::Projection
     
@@ -65,19 +65,32 @@ Then create some projections
         # Will receive all events
       end
     end
-   
-Then run the runner, for example by putting it in a rake task
 
-    runner = SandthornSequelProjection::Runner.new
+### 3. Create a manifest
+
+Manifests are used to define the order in which projections are run.
+
+    manifest = SandthornSequelProjections::Manifest.create
+      [
+        MyProjection,
+        MyProjections::SomeOtherProjection
+      ]
+  
+### 4. Run the projections
+
+Create a runner and give it the manifest. Run your projections.
+
+    runner = SandthornSequelProjection::Runner.new(manifest)
     runner.run
     
-The runner polls the database for changes and passes new events to the projections found in the designated 
-projections folder.
-    
-Then run the updater process. It will continuously poll for new events.
+The runner runs migrations for all of the projections and then 
+polls the event store for changes and passes new events to the projections.
 
-    $ rake sandthorn_sequel_projections:run
-    # => Runs 'til Ragnarok
+## Plans for the future
+
+The projection manifest should define dependent projections, similar to how Rake tasks are defined.
+In this way, we could identify the most efficient way of splitting up projections over multiple 
+threads.
 
 ## Contributing
 
