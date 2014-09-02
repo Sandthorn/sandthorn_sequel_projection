@@ -13,12 +13,18 @@ module SandthornSequelProjection
     end
 
     def get_batch
-      events = Array.wrap(@event_store.get_events(after_sequence_number: last_sequence_number, take: batch_size))
+      events = get_events
       events.tap do |events|
         if last_event = events.last
           @last_sequence_number = last_event[:sequence_number]
         end
       end
+    end
+
+  private
+    
+    def get_events
+      Array.wrap(@event_store.get_events(after_sequence_number: last_sequence_number, take: batch_size))
     end
 
   end
