@@ -116,6 +116,27 @@ module SandthornSequelProjection
           expect { |b| lock.acquire(&b) }.to_not yield_control
         end
       end
+
+      context "when an exception is raised" do
+
+        MyMegaException = Class.new(StandardError)
+
+        it "releases the lock" do
+          begin
+            lock.acquire do
+              expect(lock.locked?).to be_truthy
+              raise MyMegaException
+            end
+          rescue
+          ensure
+            expect(lock.locked?).to be_falsey
+          end
+        end
+
+        it "reraises the exception" do
+          expect { lock.acquire { raise MyMegaException } }.to raise_exception(MyMegaException)
+        end
+      end
     end
 
 

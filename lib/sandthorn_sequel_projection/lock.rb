@@ -34,8 +34,11 @@ module SandthornSequelProjection
 
     def acquire
       if attempt_lock
-        yield
-        release
+        begin
+          yield
+        ensure
+          release
+        end
       end
     end
 
