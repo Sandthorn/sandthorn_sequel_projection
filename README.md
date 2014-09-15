@@ -5,8 +5,10 @@ Uses the Sequel gem for storage.
  
 Main points:
 
-- Projections are placed in a projections folder for easy access
-- DSL for registering listeners to filtered event streams
+- DSL for registering event handlers that listen to filtered event streams
+- Event handlers receive one event at a time
+- Planned: projection manifests are used to declare dependent projections. This information can be used to execute
+  non-dependent projections in parallel
 
 Requirements on event handling:
 
@@ -91,6 +93,27 @@ polls the event store for changes and passes new events to the projections.
 The projection manifest should define dependent projections, similar to how Rake tasks are defined.
 In this way, we could identify the most efficient way of splitting up projections over multiple 
 threads.
+
+For example:
+
+    SandthornSequelProjection.manifest do
+      projection my_dependent_projection: [:projection_foo, :projection_bar]
+      projection my_other_dependent_projection: [:my_dependent_projection, :projection_bar]
+      projection my_third_dependent_projection: :projection_qux
+    end
+
+This manifest would create two independent branches:
+
+    :projection_foo               :projection_bar               :projection_qux
+              \                     /                                   |
+             :my_dependent_projection                          :my_third_dependent_projection
+                         |
+                         |
+           :my_other_dependent_projection
+       
+       
+       
+
 
 ## Contributing
 
