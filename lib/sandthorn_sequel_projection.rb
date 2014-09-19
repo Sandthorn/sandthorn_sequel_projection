@@ -1,8 +1,20 @@
 require "sequel"
 require "sandthorn_event_filter"
 
+
 require "sandthorn_sequel_projection/errors"
+require "sandthorn_sequel_projection/version"
+require "sandthorn_sequel_projection/utilities"
+require "sandthorn_sequel_projection/cursor"
 require "sandthorn_sequel_projection/event_store"
+require "sandthorn_sequel_projection/event_handler"
+require "sandthorn_sequel_projection/event_handler_collection"
+require "sandthorn_sequel_projection/projection"
+require "sandthorn_sequel_projection/lock"
+require "sandthorn_sequel_projection/processed_events_tracker"
+require "sandthorn_sequel_projection/manifest"
+require "sandthorn_sequel_projection/runner"
+
 module SandthornSequelProjection
 
   class << self
@@ -36,6 +48,10 @@ module SandthornSequelProjection
       yield(self) if block_given?
     end
 
+    def event_store=(store)
+      @event_store = EventStore.new(store)
+    end
+
     def self.default
       self.new do |c|
         c.batch_size = 40
@@ -44,14 +60,3 @@ module SandthornSequelProjection
 
   end
 end
-
-require "sandthorn_sequel_projection/version"
-require "sandthorn_sequel_projection/utilities"
-require "sandthorn_sequel_projection/cursor"
-require "sandthorn_sequel_projection/event_handler"
-require "sandthorn_sequel_projection/event_handler_collection"
-require "sandthorn_sequel_projection/projection"
-require "sandthorn_sequel_projection/lock"
-require "sandthorn_sequel_projection/processed_events_tracker"
-require "sandthorn_sequel_projection/manifest"
-require "sandthorn_sequel_projection/runner"
