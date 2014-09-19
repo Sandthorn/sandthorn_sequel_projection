@@ -15,7 +15,7 @@ require 'forwardable'
     end
 
     def migrate!
-      (self.class.migration || Utilities::NullProc.new).call(db_connection)
+      self.class.migration.call(db_connection)
     end
 
     def update!
@@ -26,10 +26,15 @@ require 'forwardable'
 
     class << self
 
-      attr_accessor :migration, :event_handlers
+      attr_accessor :event_handlers
+      attr_writer :migration
 
       def define_migration(migration = nil)
         self.migration = migration || Proc.new # Proc.new will wrap the block argument in a Proc
+      end
+
+      def migration
+        @migration ||= Utilities::NullProc.new
       end
 
       def define_event_handlers
