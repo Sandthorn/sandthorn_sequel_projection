@@ -1,6 +1,8 @@
 require "sequel"
 require "sandthorn_event_filter"
 
+require "sandthorn_sequel_projection/errors"
+require "sandthorn_sequel_projection/event_store"
 module SandthornSequelProjection
 
   class << self
