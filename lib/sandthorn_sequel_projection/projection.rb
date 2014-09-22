@@ -5,6 +5,7 @@ require 'forwardable'
     extend Forwardable
 
     def_delegator self, :identifier
+    def_delegator :tracker, :last_processed_sequence_number
 
     attr_reader :db_connection, :event_handlers, :tracker
 
