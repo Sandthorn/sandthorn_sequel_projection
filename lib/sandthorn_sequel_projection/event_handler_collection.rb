@@ -16,7 +16,6 @@ module SandthornSequelProjection
     end
 
     def handle(projection, events)
-      events = Array.wrap(events)
       events.each do |event|
         handlers.each do |handler|
           handler.handle(projection, event)
