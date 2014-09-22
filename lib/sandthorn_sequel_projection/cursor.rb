@@ -24,7 +24,15 @@ module SandthornSequelProjection
   private
     
     def get_events
-      Array.wrap(@event_store.get_events(after_sequence_number: last_sequence_number, take: batch_size))
+      wrap(get_event_array)
+    end
+
+    def wrap(events)
+      SandthornEventFilter.filter(events)
+    end
+
+    def get_event_array
+      @event_store.get_events(after_sequence_number: last_sequence_number, take: batch_size)
     end
 
   end
