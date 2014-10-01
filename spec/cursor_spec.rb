@@ -30,11 +30,11 @@ module SandthornSequelProjection
     describe "#get_batch" do
       describe "sequential calls" do
         it "returns pages until empty and keeps track of seen sequence numbers" do
-          expect(cursor.get_batch).to eq(first_page)
+          expect(cursor.get_batch.events).to eq(first_page)
           expect(cursor.last_sequence_number).to eq(first_page.last[:sequence_number])
-          expect(cursor.get_batch).to eq(second_page)
+          expect(cursor.get_batch.events).to eq(second_page)
           expect(cursor.last_sequence_number).to eq(second_page.last[:sequence_number])
-          expect(cursor.get_batch).to eq(third_page)
+          expect(cursor.get_batch.events).to eq(third_page)
           expect(cursor.last_sequence_number).to eq(second_page.last[:sequence_number])
         end
       end
