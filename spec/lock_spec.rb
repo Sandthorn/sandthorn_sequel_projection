@@ -118,7 +118,6 @@ module SandthornSequelProjection
       end
 
       context "when an exception is raised" do
-
         MyMegaException = Class.new(StandardError)
 
         it "releases the lock" do
@@ -138,7 +137,5 @@ module SandthornSequelProjection
         end
       end
     end
-
-
   end
 end
