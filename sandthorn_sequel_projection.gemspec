@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.0"
+  spec.required_ruby_version = ">= 2.1"
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency     "sandthorn", "~> 0.6"
   spec.add_runtime_dependency     "sandthorn_event_filter", "~> 0.0.4"
   spec.add_runtime_dependency     "sequel"
-  spec.add_runtime_dependency     "simple_migrator"
+  spec.add_runtime_dependency     "simple_migrator", "~> 0.0.2"
 
 end
