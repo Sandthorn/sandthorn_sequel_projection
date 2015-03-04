@@ -56,9 +56,9 @@ SandthornSequelProjection uses Sequel to connected to a database. Configure it l
       # The key is the name of the method to be executed. Filters are defined in the value.
       # Handlers with only a symbol will execute for all events.
       define_event_handlers do |handlers|
-        handlers.add new_user: { aggregate_type: MyAggregates::User, event_name: :new }
-        handlers.add foo_changed: { aggregate_types: [MyAggregates::User, MyAggregates::Foo] }
-        handlers.add :wildcard
+        handlers.define new_user: { aggregate_type: MyAggregates::User, event_name: :new }
+        handlers.define foo_changed: { aggregate_types: [MyAggregates::User, MyAggregates::Foo] }
+        handlers.define :wildcard
       end 
         
       def new_users(event)
