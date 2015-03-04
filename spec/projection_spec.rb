@@ -48,10 +48,6 @@ module SandthornSequelProjection
         event_store.reset
         event_store.add_event({sequence_number: 1})
         event_store.add_event({sequence_number: 2})
-        SandthornSequelProjection.configure do |c|
-          c.db_connection = Sequel.sqlite
-        end
-        SandthornSequelProjection.start
       end
 
       it "fetches events and passes them on to the handlers" do

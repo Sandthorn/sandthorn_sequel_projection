@@ -28,6 +28,7 @@ module SandthornSequelProjection
     def configure
       @configuration ||= Configuration.default
       yield(configuration) if block_given?
+      start
     end
 
     def start
@@ -52,6 +53,5 @@ module SandthornSequelProjection
         c.batch_size = 40
       end
     end
-
   end
 end

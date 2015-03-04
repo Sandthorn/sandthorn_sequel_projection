@@ -15,7 +15,6 @@ RSpec.configure do |config|
     SandthornSequelProjection.configure do |config|
       config.db_connection = Sequel.sqlite
     end
-    SandthornSequelProjection.start
   end
 end
 
