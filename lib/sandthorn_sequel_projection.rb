@@ -1,7 +1,7 @@
 require "sequel"
 require "sandthorn_event_filter"
-
 require "simple_migrator"
+require "sandthorn"
 
 require "sandthorn_sequel_projection/errors"
 require "sandthorn_sequel_projection/version"
@@ -18,6 +18,10 @@ require "sandthorn_sequel_projection/runner"
 module SandthornSequelProjection
 
   class << self
+    require 'delegate'
+    extend Forwardable
+
+    def_delegators :configuration, :batch_size, :event_stores
 
     attr_accessor :configuration
 
@@ -30,26 +34,17 @@ module SandthornSequelProjection
       ProcessedEventsTracker.migrate!(configuration.projections_driver)
     end
 
-    def event_store
-      configuration.event_store
+    def find_event_store(name)
+      Sandthorn.find_event_store(name)
     end
-
-    def batch_size
-      configuration.batch_size
-    end
-
   end
 
   class Configuration
 
-    attr_accessor :projections_driver, :event_store, :projections_folder, :batch_size
+    attr_accessor :projections_driver, :event_stores, :projections_folder, :batch_size
 
     def initialize
       yield(self) if block_given?
-    end
-
-    def event_store=(store)
-      @event_store = EventStore.new(store)
     end
 
     def self.default

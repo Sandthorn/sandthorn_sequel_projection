@@ -4,7 +4,7 @@ module SandthornSequelProjection
 
   class MyProjection < Projection
 
-    define_migration do |db_con|
+    migration("20150303-1") do |db_con|
       db_con.create_table?(table_name) do
         primary_key :id
         String :aggregate_id
@@ -56,18 +56,16 @@ module SandthornSequelProjection
     end
 
     def table
-      db_connection[self.class.table_name]
+      db_connection[table_name]
     end
 
-    def self.table_name
+    def table_name
       :products_on_sale
     end
 
     def aggregates_on_sale_ids
       table.select_map(:aggregate_id)
     end
-
-
   end
 
   describe MyProjection do
@@ -77,14 +75,14 @@ module SandthornSequelProjection
     end
 
     def table
-      db_connection[MyProjection.table_name]
-    end
-
-    SandthornSequelProjection.configure do |sandthorn|
-      sandthorn.event_store = MockEventStore.with_data
+      db_connection[projection.table_name]
     end
 
     let(:projection) { MyProjection.new }
+
+    before do
+      Sandthorn.default_event_store = MockEventStore.with_data
+    end
 
     describe "#migrate!" do
       it "creates the wanted table" do
@@ -97,12 +95,12 @@ module SandthornSequelProjection
       before do
         projection.migrate!
       end
-      it "calls all of the event listeners" do
-        methods = [:product_added, :removed_from_sale, :add_aggregate]
-        methods.each do |method|
+      methods = [:product_added, :removed_from_sale]
+      methods.each do |method|
+        it "calls #{method}" do
           expect(projection).to receive(method).at_least(:once).and_call_original
+          projection.update!
         end
-        projection.update!
       end
 
       it "sets the correct last_processed_sequence_number" do
@@ -118,6 +116,5 @@ module SandthornSequelProjection
         expect(projection.last_processed_sequence_number).to eq(128)
       end
     end
-
   end
 end

@@ -11,11 +11,14 @@ require 'sandthorn_event_filter/rspec/custom_matchers'
 require 'support/mock_event_store'
 
 RSpec.configure do |config|
+  config.before(:each) do
+    SandthornSequelProjection.configure do |config|
+      config.projections_driver = Sequel.sqlite
+    end
+    SandthornSequelProjection.start
+  end
 end
 
-SandthornSequelProjection.configure do |config|
-  config.projections_driver = Sequel.sqlite
-  config.event_store = SandthornSequelProjection::MockEventStore.new
+Sandthorn.configure do |sand|
+  sand.event_stores = { default: SandthornSequelProjection::MockEventStore.new }
 end
-
-SandthornSequelProjection.start

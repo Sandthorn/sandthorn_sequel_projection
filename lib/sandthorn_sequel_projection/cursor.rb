@@ -5,7 +5,7 @@ module SandthornSequelProjection
 
     def initialize(
         after_sequence_number: 0,
-        event_store: SandthornSequelProjection.event_store,
+        event_store: SandthornSequelProjection.default_event_store,
         batch_size: SandthornSequelProjection.batch_size)
       @last_sequence_number = after_sequence_number
       @batch_size = batch_size

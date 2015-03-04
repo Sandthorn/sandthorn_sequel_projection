@@ -7,12 +7,13 @@ module SandthornSequelProjection
     def_delegator self, :table_name
     def_delegators :db_connection, :transaction
 
-    attr_reader :db_connection, :identifier, :lock
+    attr_reader :db_connection, :identifier, :lock, :event_store
 
     DEFAULT_TABLE_NAME = :processed_events_trackers
 
-    def initialize(identifier, db_connection = nil)
+    def initialize(identifier:, event_store:, db_connection: nil)
       @identifier = identifier.to_s
+      @event_store = event_store
       @db_connection = db_connection || SandthornSequelProjection.configuration.projections_driver
       @lock = Lock.new(identifier, @db_connection)
       ensure_row
@@ -26,7 +27,7 @@ module SandthornSequelProjection
 
     def process_events(&block)
       with_lock do
-        cursor = Cursor.new(after_sequence_number: last_processed_sequence_number)
+        cursor = Cursor.new(after_sequence_number: last_processed_sequence_number, event_store: event_store)
         events = cursor.get_batch
         transaction do
           until(events.empty?)

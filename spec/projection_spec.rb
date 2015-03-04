@@ -26,10 +26,10 @@ module SandthornSequelProjection
   end
 
   describe Projection do
+    let(:projection) { MyModule::WithHandlers.new }
 
     describe "::initialize" do
       it "sets the handlers on the instance" do
-        projection = MyModule::WithHandlers.new
         handlers = projection.event_handlers
         expect(handlers.length).to eq(2)
       end
@@ -41,29 +41,10 @@ module SandthornSequelProjection
       end
     end
 
-    describe "#migrate!" do
-      context "there is a migration" do
-        it "runs the defined migration" do
-          klass = Class.new(Projection)
-          block = Proc.new {}
-          klass.define_migration(block)
-          expect(block).to receive(:call)
-          klass.new.migrate!
-        end
-      end
-
-      context "when there is no migration" do
-        it "does not crash" do
-          klass = Class.new(Projection)
-          expect { klass.new(nil).migrate! }.to_not raise_error
-        end
-      end
-    end
-
     describe "#update!" do
 
       before do
-        event_store = SandthornSequelProjection.event_store
+        event_store = Sandthorn.default_event_store
         event_store.reset
         event_store.add_event({sequence_number: 1})
         event_store.add_event({sequence_number: 2})
@@ -83,11 +64,32 @@ module SandthornSequelProjection
       end
     end
 
+    describe "::event_store" do
+      let(:klass) { Class.new(Projection) }
+      context "when given an event store name" do
+        it "sets the event store" do
+          klass.event_store(:foo)
+          expect(klass.event_store_name).to eq(:foo)
+        end
+      end
+
+      context "when given no argument" do
+        context "when an event store has been configured" do
+          before do
+            klass.event_store(:foo)
+          end
+          it "fetches the event store" do
+            expect(SandthornSequelProjection).to receive(:find_event_store).with(:foo)
+            klass.event_store
+          end 
+        end
+      end
+    end
+
     describe "::define_event_handlers" do
       it "yields an EventHandlerCollection" do
         expect { |b| MyModule::TestProjection.define_event_handlers(&b) }.to yield_with_args(EventHandlerCollection)
       end
     end
-
   end
 end

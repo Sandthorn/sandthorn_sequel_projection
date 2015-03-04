@@ -25,16 +25,28 @@ module SandthornSequelProjection
       end
 
       context "when given filters" do
-        let(:handler) { EventHandler.new(foo: { aggregate_type: "FooBar", event_name: "new" })}
-        let(:extractor) { handler.filter.matchers.matchers.first }
-        let(:matching_event) { { aggregate_type: "FooBar", event_name: "new" } }
+        context "and given singular keywords" do
+          let(:handler) { EventHandler.new(foo: { aggregate_type: "FooBar", event_name: "new" })}
+          let(:extractor) { handler.filter.matchers.matchers.first }
+          let(:matching_event) { { aggregate_type: "FooBar", event_name: "new" } }
 
-        it "creates a handler with an extract filter" do
-          expect(extractor).to be_a_kind_of(SandthornEventFilter::Matchers::Extract)
-          expect(extractor).to match(matching_event)
+          it "creates a handler with an extract filter" do
+            expect(extractor).to be_a_kind_of(SandthornEventFilter::Matchers::Extract)
+            expect(extractor).to match(matching_event)
+          end
+        end
+
+        context "when given plural keywords" do
+          let(:handler) { EventHandler.new(foo: { aggregate_types: ["FooBar"], event_names: ["new"] })}
+          let(:extractor) { handler.filter.matchers.matchers.first }
+          let(:matching_event) { { aggregate_type: "FooBar", event_name: "new" } }
+
+          it "creates the correct handler" do
+            expect(extractor).to be_a_kind_of(SandthornEventFilter::Matchers::Extract)
+            expect(extractor).to match(matching_event)
+          end
         end
       end
-
     end
 
     describe "#handle" do

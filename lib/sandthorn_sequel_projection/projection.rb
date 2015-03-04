@@ -3,20 +3,20 @@ require 'forwardable'
  module SandthornSequelProjection
   class Projection
     extend Forwardable
+    include SimpleMigrator::Migratable
 
-    def_delegator self, :identifier
-    def_delegator :tracker, :last_processed_sequence_number
+    def_delegators self, :identifier, :event_store
+    def_delegators :tracker, :last_processed_sequence_number
 
     attr_reader :db_connection, :event_handlers, :tracker
 
     def initialize(db_connection = nil)
       @db_connection = db_connection || SandthornSequelProjection.configuration.projections_driver
-      @tracker = ProcessedEventsTracker.new(identifier, @db_connection)
+      @tracker = ProcessedEventsTracker.new(
+          identifier: identifier,
+          db_connection: @db_connection,
+          event_store: event_store)
       @event_handlers = self.class.event_handlers
-    end
-
-    def migrate!
-      self.class.migration.call(db_connection)
     end
 
     def update!
@@ -25,18 +25,27 @@ require 'forwardable'
       end
     end
 
+    def migrator
+      SimpleMigrator.migrator(db_connection)
+    end
+
     class << self
+      attr_reader :event_store_name
 
+      def event_store(event_store = nil)
+        if event_store
+          @event_store_name = event_store
+        else
+          find_event_store
+        end
+      end
+
+      def find_event_store
+        SandthornSequelProjection.find_event_store(@event_store_name)
+      end
+
+      attr_reader :event_store_name
       attr_accessor :event_handlers
-      attr_writer :migration
-
-      def define_migration(migration = nil)
-        self.migration = migration || Proc.new # Proc.new will wrap the block argument in a Proc
-      end
-
-      def migration
-        @migration ||= Utilities::NullProc.new
-      end
 
       def define_event_handlers
         @event_handlers ||= EventHandlerCollection.new

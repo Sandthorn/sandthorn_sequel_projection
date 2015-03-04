@@ -4,8 +4,9 @@ module SandthornSequelProjection
   describe ProcessedEventsTracker do
 
     describe "migrated specs" do
+      let(:event_store) { Sandthorn.default_event_store }
       let(:db_connection) { SandthornSequelProjection.configuration.projections_driver }
-      let(:tracker) { ProcessedEventsTracker.new(:foo) }
+      let(:tracker) { ProcessedEventsTracker.new(identifier: :foo, event_store: event_store) }
       describe "::initialize" do
         it "ensures that the tracker row is present" do
           tracker_row = db_connection[tracker.table_name].where(identifier: tracker.identifier).first
@@ -25,7 +26,6 @@ module SandthornSequelProjection
       end
 
       describe "#process_events" do
-        let(:event_store) { SandthornSequelProjection.event_store }
         let(:events) { [{sequence_number: 1}, {sequence_number: 2}] }
         around do |example|
           old_batch_size = SandthornSequelProjection.batch_size
@@ -36,7 +36,7 @@ module SandthornSequelProjection
 
         before do
           tracker.reset
-          SandthornSequelProjection.event_store.reset
+          Sandthorn.default_event_store.reset
           events.each { |e| event_store.add(e) }
         end
 
