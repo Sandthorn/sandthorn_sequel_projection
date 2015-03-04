@@ -31,7 +31,7 @@ module SandthornSequelProjection
     end
 
     def start
-      ProcessedEventsTracker.migrate!(configuration.projections_driver)
+      ProcessedEventsTracker.migrate!(configuration.db_connection)
     end
 
     def find_event_store(name)
@@ -41,7 +41,7 @@ module SandthornSequelProjection
 
   class Configuration
 
-    attr_accessor :projections_driver, :event_stores, :projections_folder, :batch_size
+    attr_accessor :db_connection, :event_stores, :projections_folder, :batch_size
 
     def initialize
       yield(self) if block_given?

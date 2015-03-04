@@ -11,7 +11,7 @@ require 'forwardable'
     attr_reader :db_connection, :event_handlers, :tracker
 
     def initialize(db_connection = nil)
-      @db_connection = db_connection || SandthornSequelProjection.configuration.projections_driver
+      @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection
       @tracker = ProcessedEventsTracker.new(
           identifier: identifier,
           db_connection: @db_connection,

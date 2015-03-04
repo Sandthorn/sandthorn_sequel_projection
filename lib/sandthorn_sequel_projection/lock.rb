@@ -12,7 +12,7 @@ module SandthornSequelProjection
 
     def initialize(identifier, db_connection = nil, table_name = nil)
       @identifier     = identifier.to_s
-      @db_connection  = db_connection || SandthornDriverSequel.configuration.projections_driver
+      @db_connection  = db_connection || SandthornDriverSequel.configuration.db_connection
       @table_name     = table_name || ProcessedEventsTracker::DEFAULT_TABLE_NAME
     end
 

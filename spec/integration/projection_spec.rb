@@ -71,7 +71,7 @@ module SandthornSequelProjection
   describe MyProjection do
 
     def db_connection
-      SandthornSequelProjection.configuration.projections_driver
+      SandthornSequelProjection.configuration.db_connection
     end
 
     def table

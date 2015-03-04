@@ -13,7 +13,7 @@ require 'support/mock_event_store'
 RSpec.configure do |config|
   config.before(:each) do
     SandthornSequelProjection.configure do |config|
-      config.projections_driver = Sequel.sqlite
+      config.db_connection = Sequel.sqlite
     end
     SandthornSequelProjection.start
   end
