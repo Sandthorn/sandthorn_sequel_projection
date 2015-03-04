@@ -30,7 +30,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "codeclimate-test-reporter"
 
   spec.add_runtime_dependency     "sandthorn"
-  spec.add_runtime_dependency     "sandthorn_event_filter", "~> 0.0.3"
+  spec.add_runtime_dependency     "sandthorn_event_filter", "~> 0.0.4"
   spec.add_runtime_dependency     "sequel"
+  spec.add_runtime_dependency     "simple_migrator"
 
 end

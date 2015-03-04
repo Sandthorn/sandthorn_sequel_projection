@@ -1,6 +1,7 @@
 require "sequel"
 require "sandthorn_event_filter"
 
+require "simple_migrator"
 
 require "sandthorn_sequel_projection/errors"
 require "sandthorn_sequel_projection/version"
