@@ -8,6 +8,7 @@ module SandthornSequelProjection
       db_con.create_table?(table_name) do
         primary_key :id
         String :aggregate_id
+        TrueClass :on_sale, default: false
       end
     end
 
@@ -29,30 +30,23 @@ module SandthornSequelProjection
     def on_sale(event)
       aggregate_id = event[:aggregate_id]
       add_aggregate(aggregate_id)
+      table.where(aggregate_id: aggregate_id).update(on_sale: true)
     end
 
     def add_aggregate(aggregate_id)
       db_connection.transaction do
         exists = table.where(aggregate_id: aggregate_id).any?
-        unless exists
-          table.insert(aggregate_id: aggregate_id)
-        end
+        return exists || table.insert(aggregate_id: aggregate_id)
       end
     end
 
     def product_added(event)
-      if on_sale?(event)
-        add_aggregate(event[:aggregate_id])
-      end
+      add_aggregate(event[:aggregate_id])
     end
 
     def removed_from_sale(event)
       aggregate_id = event[:aggregate_id]
-      table.where(aggregate_id: aggregate_id).delete
-    end
-
-    def on_sale?(event)
-      event[:on_sale]
+      table.where(aggregate_id: aggregate_id).update(on_sale: false)
     end
 
     def table
@@ -64,6 +58,10 @@ module SandthornSequelProjection
     end
 
     def aggregates_on_sale_ids
+      table.where(on_sale: true).select_map(:aggregate_id)
+    end
+
+    def aggregate_ids
       table.select_map(:aggregate_id)
     end
   end
@@ -103,17 +101,25 @@ module SandthornSequelProjection
         end
       end
 
-      it "sets the correct last_processed_sequence_number" do
-        expected = %w[
+      describe "data" do
+        before { projection.update! }
+        it "sets the on_sale boolean correctly" do
+          expected = %w[
           ac1be457-b6b9-4dad-900b-acb400f810df
         ]
-        projection.update!
-        expect(projection.aggregates_on_sale_ids).to eq(expected)
-      end
+          expect(projection.aggregates_on_sale_ids).to eq(expected)
+        end
 
-      it "sets the correct last updated at" do
-        projection.update!
-        expect(projection.last_processed_sequence_number).to eq(128)
+        it "sets the correct last processed sequence number" do
+          expect(projection.last_processed_sequence_number).to eq(128)
+        end
+
+        let(:json_events) { JSON.parse(File.read("./spec/test_data/event_data.json"), symbolize_names: true) }
+        let(:aggregate_ids) { json_events.map{|event| event[:aggregate_id] }.uniq }
+
+        it "records all aggregate ids" do
+          expect(projection.aggregate_ids).to contain_exactly(*aggregate_ids)
+        end
       end
     end
   end
