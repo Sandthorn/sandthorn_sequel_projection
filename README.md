@@ -32,18 +32,24 @@ Or install it yourself as:
 
 ### 1. Configure
 
+The default configuration expects that the Sandthorn gem is present and uses it to fetch events.
+
+SandthornSequelProjection uses Sequel to connected to a database. Configure it like this:
+
     SandthornSequelProjection.configure do |thorn|
-      thorn.projection_database_url = "postgres://db-server.foo.bar"
-      thorn.event_driver = SomeDriver.new
-      thorn.projections_folder = './my_projections'
+      thorn.db_connection = Sequel.sqlite
     end
     
 ### 2. Define projections
 
     class MyProjection < SandthornSequelProjection::Projection
-    
-      define_migration do |db_connection|
-        # create whatever tables and stuff that is needed
+
+      # Start by defining any needed migrations.
+      # See SimpleMigrator::Migratable for details
+      migration("MyProjection20150215-1") do |db_connection|
+        db_connection.create_table?(:my_table) do
+          primary_key :id
+        end
       end
       
       # Event handlers will be executed in the order they were defined
