@@ -24,7 +24,14 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "sandthorn_driver_sequel"
+  spec.add_development_dependency "awesome_print"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "codeclimate-test-reporter"
 
-  spec.add_runtime_dependency     "sandthorn"
+  spec.add_runtime_dependency     "sandthorn", "~> 0.6"
+  spec.add_runtime_dependency     "sandthorn_event_filter", "~> 0.0.4"
+  spec.add_runtime_dependency     "sequel"
+  spec.add_runtime_dependency     "simple_migrator"
 
 end
