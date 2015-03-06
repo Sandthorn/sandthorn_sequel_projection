@@ -17,7 +17,7 @@ module SandthornSequelProjection
 
     alias_method :add, :add_event
 
-    def get_events(after_sequence_number: 0, take: 1)
+    def get_events(after_sequence_number: 0, take: 1, **)
       unless numeric?(after_sequence_number, take)
         raise ArgumentError, "arguments have to be numbers, received: #{after_sequence_number.inspect} and #{take.inspect}"
       end

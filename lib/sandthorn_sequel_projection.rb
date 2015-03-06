@@ -6,6 +6,7 @@ require "sandthorn"
 require "sandthorn_sequel_projection/errors"
 require "sandthorn_sequel_projection/version"
 require "sandthorn_sequel_projection/utilities"
+require "sandthorn_sequel_projection/event_store"
 require "sandthorn_sequel_projection/cursor"
 require "sandthorn_sequel_projection/event_handler"
 require "sandthorn_sequel_projection/event_handler_collection"
@@ -36,7 +37,7 @@ module SandthornSequelProjection
     end
 
     def find_event_store(name)
-      Sandthorn.find_event_store(name)
+      EventStore.new(name)
     end
   end
 
