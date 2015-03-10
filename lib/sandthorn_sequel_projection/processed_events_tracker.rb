@@ -73,7 +73,7 @@ module SandthornSequelProjection
       end
       db_connection.add_index(table_name, :identifier, unique: true)
     rescue Exception => e
-      raise Errors::MigrationError, e
+      raise MigrationError, e
     end
 
   private
