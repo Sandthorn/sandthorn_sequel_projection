@@ -29,12 +29,12 @@ module SandthornSequelProjection
       with_lock do
         cursor = Cursor.new(after_sequence_number: last_processed_sequence_number, event_store: event_store)
         events = cursor.get_batch
-        transaction do
-          until(events.empty?)
+        until(events.empty?)
+          transaction do
             block.call(events)
-            events = cursor.get_batch
+            write_sequence_number(cursor.last_sequence_number)
           end
-          write_sequence_number(cursor.last_sequence_number)
+          events = cursor.get_batch
         end
       end
     end
