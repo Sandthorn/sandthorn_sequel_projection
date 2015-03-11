@@ -7,8 +7,7 @@ module SandthornSequelProjection
     def get_events(*args)
       keywords = args.pop || {}
       keywords[:event_store] = @name
-      puts keywords.inspect
-      Sandthorn.get_events(after_sequence_number: 0)
+      Sandthorn.get_events(keywords)
     end
   end
 end
