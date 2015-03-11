@@ -46,8 +46,8 @@ module SandthornSequelProjection
       before do
         event_store = Sandthorn.default_event_store
         event_store.reset
-        event_store.add_event({sequence_number: 1})
-        event_store.add_event({sequence_number: 2})
+        event_store.add_event({sequence_number: 1, event_args: {}})
+        event_store.add_event({sequence_number: 2, event_args: {}})
       end
 
       it "fetches events and passes them on to the handlers" do

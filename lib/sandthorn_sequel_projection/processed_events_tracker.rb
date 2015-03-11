@@ -70,11 +70,10 @@ module SandthornSequelProjection
         String    :identifier
         Integer   :last_processed_sequence_number, default: 0
         DateTime  :locked_at, null: true
-
         index [:identifier], unique: true
       end
     rescue Exception => e
-      raise Errors::MigrationError, e
+      raise MigrationError, e
     end
 
   private

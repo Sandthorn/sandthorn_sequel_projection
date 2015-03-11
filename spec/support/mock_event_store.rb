@@ -1,29 +1,35 @@
 require 'json'
-
+require 'pp'
 module SandthornSequelProjection
   class MockEventStore
 
     def initialize(events = nil)
-      @events = Array.wrap(events)
+      Array.wrap(events).each do |event|
+        add_event(event)
+      end
     end
 
     def reset(events = [])
       @events = events
     end
 
+    def events
+      @events ||= []
+    end
+
     def add_event(event)
-      @events << event
+      # We have to do these silly things b/c of Sandthorn design errors.
+      event[:event_data] = Sandthorn.serialize(event[:event_args])
+      events << event
     end
 
     alias_method :add, :add_event
 
-    def get_events(after_sequence_number: 0, take: 1)
+    def get_events(after_sequence_number: 0, take: 1, **)
       unless numeric?(after_sequence_number, take)
         raise ArgumentError, "arguments have to be numbers, received: #{after_sequence_number.inspect} and #{take.inspect}"
       end
-      start = after_sequence_number
-      stop = after_sequence_number + take - 1
-      Array.wrap(@events[start..stop])
+      events.select { |event| event[:sequence_number] > after_sequence_number }.take(take).map { |e| e.dup }
     end
 
     def numeric?(*args)
