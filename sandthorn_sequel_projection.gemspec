@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency     "sandthorn", "~> 0.7"
   spec.add_runtime_dependency     "sandthorn_event_filter", "~> 0.0.4"
   spec.add_runtime_dependency     "sequel"
-  spec.add_runtime_dependency     "simple_migrator", "~> 0.0.2"
+  spec.add_runtime_dependency     "simple_migrator", "~> 0.0.3"
 
 end
