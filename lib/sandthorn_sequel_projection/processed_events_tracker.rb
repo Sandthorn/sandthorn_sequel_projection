@@ -70,8 +70,9 @@ module SandthornSequelProjection
         String    :identifier
         Integer   :last_processed_sequence_number, default: 0
         DateTime  :locked_at, null: true
+
+        index [:identifier], unique: true
       end
-      db_connection.add_index(table_name, :identifier, unique: true)
     rescue Exception => e
       raise Errors::MigrationError, e
     end
