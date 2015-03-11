@@ -11,7 +11,7 @@ module SandthornSequelProjection
 
     DEFAULT_TABLE_NAME = :processed_events_trackers
 
-    def initialize(identifier:, event_store:, db_connection: nil)
+    def initialize(identifier: required(:identifier), event_store: required(:event_store), db_connection: nil)
       @identifier = identifier.to_s
       @event_store = event_store
       @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection
@@ -77,6 +77,10 @@ module SandthornSequelProjection
     end
 
   private
+
+    def required(key)
+      raise ArgumentError, "key missing: #{key}"
+    end
 
     def write_sequence_number(number)
       table.where(identifier: identifier).update(last_processed_sequence_number: number)
