@@ -41,6 +41,12 @@ module SandthornSequelProjection
       end
     end
 
+    describe "#identifier" do
+      it "snake cases the class identifier" do
+        expect(MyModule::TestProjection.new.identifier).to eq("sandthorn_sequel_projection_my_module_test_projection")
+      end
+    end
+
     describe "#update!" do
 
       before do

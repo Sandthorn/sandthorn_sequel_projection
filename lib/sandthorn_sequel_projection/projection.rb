@@ -5,7 +5,7 @@ require 'forwardable'
     extend Forwardable
     include SimpleMigrator::Migratable
 
-    def_delegators self, :identifier, :event_store
+    def_delegators :klass, :identifier, :event_store
     def_delegators :tracker, :last_processed_sequence_number
 
     attr_reader :db_connection, :event_handlers, :tracker
@@ -23,6 +23,10 @@ require 'forwardable'
       tracker.process_events do |batch|
         event_handlers.handle(self, batch)
       end
+    end
+
+    def klass
+      self.class
     end
 
     def migrator
