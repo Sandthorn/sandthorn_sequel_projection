@@ -4,8 +4,8 @@ module SandthornSequelProjection
   describe ProcessedEventsTracker do
 
     describe "migrated specs" do
-      let(:event_store) { Sandthorn.default_event_store }
-      let(:db_connection) { SandthornSequelProjection.configuration.db_connection }
+      let(:event_store) { SandthornSequelProjection.configuration.event_store }
+      let(:db_connection) { SandthornSequelProjection.configuration.db_connection_projections }
       let(:tracker) { ProcessedEventsTracker.new(identifier: :foo, event_store: event_store) }
       describe "::initialize" do
         it "ensures that the tracker row is present" do
@@ -36,7 +36,7 @@ module SandthornSequelProjection
 
         before do
           tracker.reset
-          Sandthorn.default_event_store.reset
+          SandthornSequelProjection.configuration.event_store.reset
           events.each { |e| event_store.add(e) }
         end
 

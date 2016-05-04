@@ -38,7 +38,7 @@ module SandthornSequelProjection
     end
 
     def db_connection
-      SandthornSequelProjection.configuration.db_connection
+      SandthornSequelProjection.configuration.db_connection_projections
     end
 
     def migrate!

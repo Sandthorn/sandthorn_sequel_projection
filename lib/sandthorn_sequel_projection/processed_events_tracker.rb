@@ -14,7 +14,7 @@ module SandthornSequelProjection
     def initialize(identifier: required(:identifier), event_store: required(:event_store), db_connection: nil)
       @identifier = identifier.to_s
       @event_store = event_store
-      @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection
+      @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection_projections
       @lock = Lock.new(identifier, @db_connection)
       ensure_row
     end

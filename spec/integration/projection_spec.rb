@@ -69,7 +69,7 @@ module SandthornSequelProjection
   describe MyProjection do
 
     def db_connection
-      SandthornSequelProjection.configuration.db_connection
+      SandthornSequelProjection.configuration.db_connection_projections
     end
 
     def table
@@ -79,7 +79,7 @@ module SandthornSequelProjection
     let(:projection) { MyProjection.new }
 
     before do
-      Sandthorn.default_event_store = MockEventStore.with_data
+      SandthornSequelProjection.configuration.event_store = MockEventStore.with_data
     end
 
     describe "#migrate!" do

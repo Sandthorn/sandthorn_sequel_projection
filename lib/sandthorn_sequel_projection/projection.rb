@@ -11,7 +11,7 @@ require 'forwardable'
     attr_reader :db_connection, :event_handlers, :tracker
 
     def initialize(db_connection = nil)
-      @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection
+      @db_connection = db_connection || SandthornSequelProjection.configuration.db_connection_projections
       @tracker = ProcessedEventsTracker.new(
           identifier: identifier,
           db_connection: @db_connection,
@@ -34,21 +34,11 @@ require 'forwardable'
     end
 
     class << self
-      attr_reader :event_store_name
 
-      def event_store(event_store = nil)
-        if event_store
-          @event_store_name = event_store
-        else
-          find_event_store
-        end
+      def event_store
+        SandthornSequelProjection.configuration.event_store
       end
 
-      def find_event_store
-        SandthornSequelProjection.find_event_store(@event_store_name)
-      end
-
-      attr_reader :event_store_name
       attr_accessor :event_handlers
 
       def define_event_handlers

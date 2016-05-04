@@ -12,12 +12,14 @@ require 'support/mock_event_store'
 
 RSpec.configure do |config|
   config.before(:each) do
+
     SandthornSequelProjection.configure do |config|
-      config.db_connection = Sequel.sqlite
+      config.db_connection_projections = Sequel.sqlite
+      config.event_store = event_store
     end
   end
 end
 
-Sandthorn.configure do |sand|
-  sand.event_stores = { default: SandthornSequelProjection::MockEventStore.new }
+def event_store
+  @event_store ||= SandthornSequelProjection::MockEventStore.new
 end
