@@ -9,7 +9,7 @@ module SandthornSequelProjection
         it "returns events with serialized event data" do
           events = store.get_events
           event = events.first
-          expect(event[:event_data]).to eq(YAML.dump(event[:event_args]))
+          expect(event[:event_args]).to eq(event[:event_args])
         end
 
         it "returns the correct amount of events" do

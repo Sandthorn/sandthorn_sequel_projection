@@ -18,8 +18,6 @@ module SandthornSequelProjection
     end
 
     def add_event(event)
-      # We have to do these silly things b/c of Sandthorn design errors.
-      event[:event_data] = Sandthorn.serialize(event[:event_args])
       events << event
     end
 
