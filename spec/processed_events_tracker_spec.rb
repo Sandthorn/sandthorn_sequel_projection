@@ -12,21 +12,21 @@ module SandthornSequelProjection
           tracker_row = db_connection[tracker.table_name].where(identifier: tracker.identifier).first
           expect(tracker_row).to_not be_nil
           expect(tracker_row[:identifier]).to eq(tracker.identifier)
-          expect(tracker_row[:last_processed_sequence_number]).to eq(0)
+          expect(tracker_row[:last_processed_event]).to eq("0")
         end
       end
 
-      describe '#last_processed_sequence_number' do
+      describe '#last_processed_event' do
         it "returns the integer in the db" do
           db_connection[tracker.table_name].
             where(identifier: tracker.identifier).
-            update(last_processed_sequence_number: 12)
-          expect(tracker.last_processed_sequence_number).to eq(12)
+            update(last_processed_event: "12")
+          expect(tracker.last_processed_event).to eq("12")
         end
       end
 
       describe "#process_events" do
-        let(:events) { [{sequence_number: 1}, {sequence_number: 2}] }
+        let(:events) { [{sequence_number: "1"}, {sequence_number: "2"}] }
         around do |example|
           old_batch_size = SandthornSequelProjection.batch_size
           SandthornSequelProjection.configuration.batch_size = 1
@@ -46,7 +46,7 @@ module SandthornSequelProjection
 
         it "sets the last processed number" do
           tracker.process_events { |*| }
-          expect(tracker.last_processed_sequence_number).to eq(2)
+          expect(tracker.last_processed_event).to eq("2")
         end
 
         it "has the lock during the yield" do
@@ -69,7 +69,7 @@ module SandthornSequelProjection
         it "creates the requisite database table" do
           expect { ProcessedEventsTracker.migrate!(db_connection) }.to_not raise_error
           expect(db_connection.table_exists?(ProcessedEventsTracker.table_name)).to be_truthy
-          expected_columns = :identifier, :last_processed_sequence_number, :locked_at
+          expected_columns = :identifier, :last_processed_event, :locked_at
           expect(db_connection[ProcessedEventsTracker.table_name].columns).to include(*expected_columns)
         end
       end

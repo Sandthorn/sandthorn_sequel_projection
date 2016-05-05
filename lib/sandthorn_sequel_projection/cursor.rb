@@ -1,13 +1,13 @@
 module SandthornSequelProjection
   class Cursor
 
-    attr_reader :last_sequence_number, :batch_size
+    attr_reader :last_event, :batch_size
 
     def initialize(
-        after_sequence_number: 0,
-        event_store: SandthornSequelProjection.default_event_store,
+        after_event: "0",
+        event_store: SandthornSequelProjection.event_store,
         batch_size: SandthornSequelProjection.batch_size)
-      @last_sequence_number = after_sequence_number
+      @last_event = after_event
       @batch_size = batch_size
       @event_store = event_store
     end
@@ -16,13 +16,13 @@ module SandthornSequelProjection
       events = get_events
       events.tap do |events|
         if last_event = events.last
-          @last_sequence_number = last_event[:sequence_number]
+          @last_event = last_event[:sequence_number].to_s || last_event[:event_id] #sequence_number is bias from sandthorn_driver_sequel
         end
       end
     end
 
   private
-    
+
     def get_events
       wrap(get_event_array)
     end
@@ -32,7 +32,7 @@ module SandthornSequelProjection
     end
 
     def get_event_array
-      @event_store.get_events(after_sequence_number: last_sequence_number, take: batch_size)
+      @event_store.get_events(after_event: last_event, take: batch_size)
     end
 
   end

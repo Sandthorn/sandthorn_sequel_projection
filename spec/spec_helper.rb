@@ -8,7 +8,7 @@ end
 
 require 'sandthorn_sequel_projection'
 require 'sandthorn_event_filter/rspec/custom_matchers'
-require 'support/mock_event_store'
+require 'support/mock_sequel_event_store'
 
 RSpec.configure do |config|
   config.before(:each) do
@@ -21,5 +21,5 @@ RSpec.configure do |config|
 end
 
 def event_store
-  @event_store ||= SandthornSequelProjection::MockEventStore.new
+  @event_store ||= SandthornSequelProjection::MockSequelEventStore.new
 end

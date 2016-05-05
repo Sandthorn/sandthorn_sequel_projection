@@ -79,7 +79,7 @@ module SandthornSequelProjection
     let(:projection) { MyProjection.new }
 
     before do
-      SandthornSequelProjection.configuration.event_store = MockEventStore.with_data
+      SandthornSequelProjection.configuration.event_store = MockSequelEventStore.with_data
     end
 
     describe "#migrate!" do
@@ -101,7 +101,7 @@ module SandthornSequelProjection
         end
       end
 
-      describe "data" do
+      describe "sequel event data" do
         before { projection.update! }
         it "sets the on_sale boolean correctly" do
           expected = %w[
@@ -111,16 +111,17 @@ module SandthornSequelProjection
         end
 
         it "sets the correct last processed sequence number" do
-          expect(projection.last_processed_sequence_number).to eq(128)
+          expect(projection.last_processed_event).to eq("128")
         end
 
-        let(:json_events) { JSON.parse(File.read("./spec/test_data/event_data.json"), symbolize_names: true) }
+        let(:json_events) { JSON.parse(File.read("./spec/test_data/sequel_event_data.json"), symbolize_names: true) }
         let(:aggregate_ids) { json_events.map{|event| event[:aggregate_id] }.uniq }
 
         it "records all aggregate ids" do
           expect(projection.aggregate_ids).to contain_exactly(*aggregate_ids)
         end
       end
+
     end
   end
 end

@@ -27,20 +27,20 @@ module SandthornSequelProjection
 
     def process_events(&block)
       with_lock do
-        cursor = Cursor.new(after_sequence_number: last_processed_sequence_number, event_store: event_store)
+        cursor = Cursor.new(after_event: last_processed_event, event_store: event_store)
         events = cursor.get_batch
         until(events.empty?)
           transaction do
             block.call(events)
-            write_sequence_number(cursor.last_sequence_number)
+            write_sequence_number(cursor.last_event)
           end
           events = cursor.get_batch
         end
       end
     end
 
-    def last_processed_sequence_number
-      row[:last_processed_sequence_number]
+    def last_processed_event
+      row[:last_processed_event]
     end
 
     def table
@@ -57,7 +57,7 @@ module SandthornSequelProjection
 
     def reset
       with_lock do
-        write_sequence_number(0)
+        write_sequence_number("0")
       end
     end
 
@@ -68,7 +68,7 @@ module SandthornSequelProjection
     def self.migrate!(db_connection)
       db_connection.create_table?(table_name) do
         String    :identifier
-        Integer   :last_processed_sequence_number, default: 0
+        String   :last_processed_event, default: "0"
         DateTime  :locked_at, null: true
         index [:identifier], unique: true
       end
@@ -83,7 +83,7 @@ module SandthornSequelProjection
     end
 
     def write_sequence_number(number)
-      table.where(identifier: identifier).update(last_processed_sequence_number: number)
+      table.where(identifier: identifier).update(last_processed_event: number)
     end
 
     def ensure_row

@@ -51,8 +51,8 @@ module SandthornSequelProjection
 
       before do
         event_store.reset
-        event_store.add_event({sequence_number: 1, event_args: {}})
-        event_store.add_event({sequence_number: 2, event_args: {}})
+        event_store.add_event({sequence_number: "1", event_args: {}})
+        event_store.add_event({sequence_number: "2", event_args: {}})
       end
 
       it "fetches events and passes them on to the handlers" do
@@ -68,8 +68,8 @@ module SandthornSequelProjection
     describe "::event_store" do
       let(:klass) { Class.new(Projection) }
 
-      it "should be a SandthornSequelProjection::MockEventStore" do
-        expect(klass.event_store).to be_a SandthornSequelProjection::MockEventStore
+      it "should be a SandthornSequelProjection::MockSequelEventStore" do
+        expect(klass.event_store).to be_a SandthornSequelProjection::MockSequelEventStore
       end
 
     end

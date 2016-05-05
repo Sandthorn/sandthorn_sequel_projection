@@ -6,7 +6,7 @@ require 'forwardable'
     include SimpleMigrator::Migratable
 
     def_delegators :klass, :identifier, :event_store
-    def_delegators :tracker, :last_processed_sequence_number
+    def_delegators :tracker, :last_processed_event
 
     attr_reader :db_connection, :event_handlers, :tracker
 
