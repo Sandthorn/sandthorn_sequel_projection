@@ -14,12 +14,12 @@ RSpec.configure do |config|
   config.before(:each) do
 
     SandthornSequelProjection.configure do |config|
-      config.db_connection_projections = Sequel.sqlite
-      config.event_store = event_store
+      config.db_connection = Sequel.sqlite
+      config.event_store = driver_event_store
     end
   end
 end
 
-def event_store
+def driver_event_store
   @event_store ||= SandthornSequelProjection::MockEventStore.new
 end
