@@ -6,8 +6,7 @@ module SandthornSequelProjection
 
     def get_events(*args)
       keywords = args.pop || {}
-      keywords[:event_store] = @name
-      Sandthorn.get_events(keywords)
+      SandthornSequelProjection.configuration.event_stores[@name].get_events(keywords)
     end
   end
 end

@@ -48,7 +48,6 @@ require 'forwardable'
         SandthornSequelProjection.find_event_store(@event_store_name)
       end
 
-      attr_reader :event_store_name
       attr_accessor :event_handlers
 
       def define_event_handlers

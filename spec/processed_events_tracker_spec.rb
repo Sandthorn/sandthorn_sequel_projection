@@ -4,7 +4,7 @@ module SandthornSequelProjection
   describe ProcessedEventsTracker do
 
     describe "migrated specs" do
-      let(:event_store) { Sandthorn.default_event_store }
+      let(:event_store) { driver_event_store }
       let(:db_connection) { SandthornSequelProjection.configuration.db_connection }
       let(:tracker) { ProcessedEventsTracker.new(identifier: :foo, event_store: event_store) }
       describe "::initialize" do
@@ -36,7 +36,7 @@ module SandthornSequelProjection
 
         before do
           tracker.reset
-          Sandthorn.default_event_store.reset
+          SandthornSequelProjection.configuration.event_stores[:default].reset
           events.each { |e| event_store.add(e) }
         end
 

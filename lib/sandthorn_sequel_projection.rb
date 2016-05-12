@@ -1,14 +1,14 @@
 require "sequel"
 require "sandthorn_event_filter"
 require "simple_migrator"
-require "sandthorn"
+#require "sandthorn"
 
 require "sandthorn_sequel_projection/errors"
 require "sandthorn_sequel_projection/version"
 require "sandthorn_sequel_projection/utilities"
-require "sandthorn_sequel_projection/event_store"
 require "sandthorn_sequel_projection/cursor"
 require "sandthorn_sequel_projection/event_handler"
+require "sandthorn_sequel_projection/event_store"
 require "sandthorn_sequel_projection/event_handler_collection"
 require "sandthorn_sequel_projection/projection"
 require "sandthorn_sequel_projection/lock"
@@ -39,6 +39,11 @@ module SandthornSequelProjection
     def find_event_store(name)
       EventStore.new(name)
     end
+
+    def default_event_store
+      SandthornSequelProjection.configuration.event_stores[:default]
+    end
+
   end
 
   class Configuration
@@ -47,6 +52,10 @@ module SandthornSequelProjection
 
     def initialize
       yield(self) if block_given?
+    end
+
+    def event_store=(store)
+      @event_stores = { default: store }
     end
 
     def self.default

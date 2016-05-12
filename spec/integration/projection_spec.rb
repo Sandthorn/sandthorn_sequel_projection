@@ -79,7 +79,7 @@ module SandthornSequelProjection
     let(:projection) { MyProjection.new }
 
     before do
-      Sandthorn.default_event_store = MockEventStore.with_data
+      SandthornSequelProjection.configuration.event_stores = { default: MockEventStore.with_data }
     end
 
     describe "#migrate!" do

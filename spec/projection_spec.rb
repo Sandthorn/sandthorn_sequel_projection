@@ -50,10 +50,9 @@ module SandthornSequelProjection
     describe "#update!" do
 
       before do
-        event_store = Sandthorn.default_event_store
-        event_store.reset
-        event_store.add_event({sequence_number: 1, event_args: {}})
-        event_store.add_event({sequence_number: 2, event_args: {}})
+        driver_event_store.reset
+        driver_event_store.add_event({sequence_number: 1, event_args: {}})
+        driver_event_store.add_event({sequence_number: 2, event_args: {}})
       end
 
       it "fetches events and passes them on to the handlers" do
@@ -68,24 +67,11 @@ module SandthornSequelProjection
 
     describe "::event_store" do
       let(:klass) { Class.new(Projection) }
-      context "when given an event store name" do
-        it "sets the event store" do
-          klass.event_store(:foo)
-          expect(klass.event_store_name).to eq(:foo)
-        end
+
+      it "should be a SandthornSequelProjection::EventStore" do
+        expect(klass.event_store).to be_a SandthornSequelProjection::EventStore
       end
 
-      context "when given no argument" do
-        context "when an event store has been configured" do
-          before do
-            klass.event_store(:foo)
-          end
-          it "fetches the event store" do
-            expect(SandthornSequelProjection).to receive(:find_event_store).with(:foo)
-            klass.event_store
-          end 
-        end
-      end
     end
 
     describe "::define_event_handlers" do
