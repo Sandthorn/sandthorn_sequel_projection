@@ -32,12 +32,15 @@ Or install it yourself as:
 
 ### 1. Configure
 
-The default configuration expects that the Sandthorn gem is present and uses it to fetch events.
+At least one sandthorn_driver instance is needed to fetch events from.
 
 SandthornSequelProjection uses Sequel to connected to a database. Configure it like this:
 
+    #Setup an event_store from SanthornDriverSequel
+    event_store = SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite)
     SandthornSequelProjection.configure do |thorn|
       thorn.db_connection = Sequel.sqlite
+      thorn.event_store = event_store
     end
     
 ### 2. Define projections
